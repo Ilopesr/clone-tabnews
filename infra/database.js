@@ -35,13 +35,10 @@ function getSslValue() {
     };
   }
 
-  if (process.env.NODE_ENV === "development") {
-    return false;
-  }
-  return true;
+  return process.env.NODE_ENV === "production" ? true : false;
 }
 
 export default {
-  query: query,
-  getNewClient: getNewClient,
+  query,
+  getNewClient,
 };
