@@ -34,3 +34,13 @@ test("POST /api/v1/migrations should return 200", async () => {
   expect(Array.isArray(responseTwoBody)).toBe(true);
   expect(responseTwoBody.length).toBe(0);
 });
+
+test("DELETE /api/v1/migrations should return 405", async () => {
+  const response = await fetch("http://localhost:3000/api/v1/migrations", {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  expect(response.status).toBe(405);
+});
