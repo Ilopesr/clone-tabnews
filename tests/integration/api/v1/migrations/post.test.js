@@ -1,11 +1,9 @@
 import database from "infra/database";
-
-async function runMigrations() {
-  await database.query("DROP SCHEMA PUBLIC CASCADE; CREATE SCHEMA PUBLIC;");
-}
+import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
-  await runMigrations();
+  await orchestrator.waitingForAllServices();
+  await database.query("DROP SCHEMA PUBLIC CASCADE; CREATE SCHEMA PUBLIC;");
 });
 
 test("POST /api/v1/migrations should return 200", async () => {
