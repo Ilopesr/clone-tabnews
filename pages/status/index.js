@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import { useEffect, useState } from "react";
 
 async function fetchAPI(key) {
   const response = await fetch(key);
@@ -8,10 +9,11 @@ async function fetchAPI(key) {
 
 export default function StatusPage() {
   const { data } = useSWR("/api/v1/status", fetchAPI);
-  const url =
-    typeof window !== "undefined" && window.location.origin
-      ? window.location.origin
-      : "";
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setUrl(window.location.origin);
+  }, []);
 
   return (
     <div
