@@ -8,100 +8,12 @@ async function fetchAPI(key) {
 }
 
 export default function StatusPage() {
-  const { data } = useSWR("/api/v1/status", fetchAPI);
-  const [url, setUrl] = useState("");
-
-  useEffect(() => {
-    setUrl(window.location.origin);
-  }, []);
+  const data = useSWR("/api/v1/status", fetchAPI);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#1e1e1e",
-        color: "#00ff00",
-        borderRadius: "10px",
-        border: "1px solid #333",
-        width: "80%",
-        maxWidth: "800px",
-        margin: "50px auto",
-        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
-        fontFamily: "Menlo, Monaco, 'Courier New', monospace",
-        overflow: "hidden",
-      }}
-    >
-      <nav
-        style={{
-          backgroundColor: "#2d2d2d",
-          padding: "10px",
-          display: "flex",
-          alignItems: "center",
-          borderBottom: "1px solid #333",
-        }}
-      >
-        <span
-          style={{
-            backgroundColor: "#ff5f56",
-            width: "12px",
-            height: "12px",
-            display: "inline-block",
-            borderRadius: "50%",
-            marginRight: "8px",
-            border: "1px solid #e33e41",
-          }}
-        ></span>
-        <span
-          style={{
-            backgroundColor: "#ffbd2e",
-            width: "12px",
-            height: "12px",
-            display: "inline-block",
-            borderRadius: "50%",
-            marginRight: "8px",
-            border: "1px solid #e09e3e",
-          }}
-        ></span>
-        <span
-          style={{
-            backgroundColor: "#27c93f",
-            width: "12px",
-            height: "12px",
-            display: "inline-block",
-            borderRadius: "50%",
-            marginRight: "8px",
-            border: "1px solid #1aab29",
-          }}
-        ></span>
-      </nav>
-      <div
-        style={{
-          padding: "20px",
-        }}
-      >
-        <p
-          style={{
-            color: "#00ff00",
-            marginBottom: "10px",
-          }}
-        >
-          $ curl -X GET {url}/api/v1/status
-        </p>
-        <pre
-          style={{
-            backgroundColor: "#1e1e1e",
-            color: "#00ff00",
-            padding: "10px",
-            borderRadius: "5px",
-            overflowX: "auto",
-          }}
-        >
-          {data ? JSON.stringify(data, null, 2) : "Loading..."}
-        </pre>
-        <UpdatedAt />
-      </div>
-    </div>
+    <>
+      <StatusCard data={data} />
+    </>
   );
 }
 
@@ -117,5 +29,55 @@ function UpdatedAt() {
     updatedAtText = updatedAt.toLocaleString("pt-BR");
   }
 
-  return <div>$ Última atualização: {updatedAtText}</div>;
+  return <small>Última atualização: {updatedAtText}</small>;
+}
+
+import { CiSquareCheck } from "react-icons/ci";
+
+function StatusCard({ data }) {
+  const dependencies = data?.data?.dependencies || {};
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setUrl(window.location.origin.split("//")[1]);
+  }, []);
+
+  return (
+    <div className="flex flex-row h-screen ">
+      <div className="container mx-auto max-w-2xl self-center space-y-10">
+        <h1 className="text-4xl font-bold">Atual status de {url} </h1>
+        <div className="border-[0.0125rem] border-zinc-400 rounded divide divide-gray-400  bg-zinc-200">
+          {Object.entries(dependencies).map(([key, value]) => (
+            <div
+              key={key}
+              className="w-full rounded p-12 bg-gray-100 shadow group
+          transition-all duration-300 ease-in-out hover:bg-gray-white" // Transição de cor de fundo
+            >
+              <div className="flex flex-row items-center justify-between">
+                <h2 className="text-base font-semibold">
+                  {key.at(0).toUpperCase() + key.slice(1)}
+                </h2>
+                <CiSquareCheck size={24} className="text-green-500" />
+              </div>
+              <div className="mt-2 space-y-1 overflow-hidden max-h-0 group-hover:max-h-96 transition-all duration-500 ease-in-out">
+                {Object.entries(value).map(([propKey, propValue]) => (
+                  <div key={propKey} className="flex justify-between">
+                    <p className="text-sm text-gray-700">
+                      {propKey.at(0).toUpperCase() +
+                        propKey.slice(1).replace(/_/g, " ")}
+                      :
+                    </p>
+                    <span className="text-sm font-medium text-gray-900">
+                      {String(propValue)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <UpdatedAt />
+      </div>
+    </div>
+  );
 }
