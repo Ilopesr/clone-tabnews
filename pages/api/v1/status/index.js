@@ -1,32 +1,12 @@
 import { createRouter } from "next-connect";
-import { InternalServerError, MethodNotAllowedError } from "@/infra/errors";
 import database from "infra/database";
+import controller from "@/infra/controllers";
 
 const router = createRouter();
 
 router.get(getHandler);
 
-export default router.handler({
-  onNoMatch: onNonMatchHandler,
-  onError: onErrorHandler,
-});
-
-function onNonMatchHandler(request, response) {
-  const publicErrorObject = new MethodNotAllowedError();
-
-  response.status(publicErrorObject.status_code).json(publicErrorObject);
-}
-
-function onErrorHandler(error, request, response) {
-  const publicErrorObject = new InternalServerError({
-    cause: error,
-  });
-
-  console.log("\nErro dentro do catch do next-connect.");
-  console.log(error);
-
-  response.status(500).json(publicErrorObject);
-}
+export default router.handler(controller.errorHandlers);
 
 async function getHandler(request, response) {
   const updateAt = new Date().toISOString();
