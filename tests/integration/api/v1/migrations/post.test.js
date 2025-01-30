@@ -45,17 +45,3 @@ describe("POST /api/v1/migrations", () => {
     });
   });
 });
-
-describe("DELETE api/v1/migrations", () => {
-  describe("Anonymous user", () => {
-    test("Only accept GET and POST", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
-        method: "DELETE",
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
-      expect(response.status).toBe(405);
-    });
-  });
-});

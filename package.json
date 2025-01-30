@@ -32,6 +32,7 @@
     "eslint": "8.57.0",
     "eslint-config-next": "15.1.6",
     "next": "15.1.6",
+    "next-connect": "^1.0.0",
     "node-pg-migrate": "7.9.0",
     "pg": "8.13.1",
     "postcss": "^8.5.1",
