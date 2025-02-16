@@ -1,10 +1,15 @@
-const { exec } = require("node:child_process");
+const { spawn } = require("node:child_process");
 
 process.stdin.resume();
 
 function handleSignal(signal) {
-  exec("npm run postdev", () => {
-    return signal;
+  const child = spawn("npm", ["run", "postdev"], {
+    stdio: "inherit",
+    shell: true,
+  });
+
+  child.on("close", (code) => {
+    process.exit(0);
   });
 }
 
